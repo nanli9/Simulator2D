@@ -39,11 +39,11 @@ BaseModel2D::BaseModel2D(TriangleMesh2D * mesh_) : mesh(mesh_)
   for (int i = 0; i < mesh_->getNumTriangles(); i++)
   {
       Vec3i verticesIndex = triangles[i];
-      Vec3d p1 = Vec3d(undeformedPositions[2 * verticesIndex[0]], undeformedPositions[2 * verticesIndex[0] + 1],0);
-      Vec3d p2 = Vec3d(undeformedPositions[2 * verticesIndex[1]], undeformedPositions[2 * verticesIndex[1] + 1],0);
-      Vec3d p3 = Vec3d(undeformedPositions[2 * verticesIndex[2]], undeformedPositions[2 * verticesIndex[2] + 1],0);
-      Vec3d v1 = p2 - p1;
-      Vec3d v2 = p3 - p1;
+      Vec2d p1 = Vec2d(undeformedPositions[2 * verticesIndex[0]], undeformedPositions[2 * verticesIndex[0] + 1]);
+      Vec2d p2 = Vec2d(undeformedPositions[2 * verticesIndex[1]], undeformedPositions[2 * verticesIndex[1] + 1]);
+      Vec2d p3 = Vec2d(undeformedPositions[2 * verticesIndex[2]], undeformedPositions[2 * verticesIndex[2] + 1]);
+      Vec2d v1 = p2 - p1;
+      Vec2d v2 = p3 - p1;
       double theta = acos(dot(v1, v2) / (len(v1) * len(v2)));
       double area = 0.5 * sin(theta) * len(v1) * len(v2);
       double mass = (area * density_)/3.0;

@@ -44,23 +44,63 @@ void MassSpring2D::ComputeElementEnergyAndForceAndStiffnessMatrix(int eid, const
   // u, size 2*vertexNumber, stores the displacements of all verteices
 
   // ********** Students should implement this **********
-  
+  Vec2d rest_Pos_A = Vec2d(undeformedPositions[2 * particleA], undeformedPositions[2 * particleA + 1]);
+  Vec2d rest_Pos_B = Vec2d(undeformedPositions[2 * particleB], undeformedPositions[2 * particleB + 1]);
+  double R = len(rest_Pos_A - rest_Pos_B);
+  Vec2d cur_Pos_A = Vec2d(u[2 * particleA], u[2 * particleA + 1]);
+  Vec2d cur_Pos_B = Vec2d(u[2 * particleB], u[2 * particleB + 1]);
+  Vec2d L = rest_Pos_A - rest_Pos_B + cur_Pos_A - cur_Pos_B;
+  if (len(L) > 0.001)
+      printf("asd");
+
   if (elementEnergy)
   {
     // please calculate the elastic energy on the spring here
-    
+      elementEnergy[0] = 0.5 * stiffness * (len(L) - R) * (len(L) - R);
   }
 
   if (elementInternalForces)
   {
     // please calculate the the spring forces here
-   
+      Vec2d F_A = -stiffness * (len(L) - R) * (L / len(L));
+      Vec2d F_B = -F_A;
+      elementInternalForces[0] = F_A[0];
+      elementInternalForces[1] = F_A[1];
+      elementInternalForces[2] = F_B[0];
+      elementInternalForces[3] = F_B[1];
   }
 
   if (elementStiffnessMatrix) 
   {
     // please calculate the stiffness matrix for the spring here
-    
+      double K_AA[4];
+      double inverse_L = 1.0 / len(L);
+      double inverse_L_cubic = 1.0 / (len(L) * len(L) * len(L));
+      double diff_x = cur_Pos_A[0] - cur_Pos_B[0];
+      double diff_y = cur_Pos_A[1] - cur_Pos_B[1];
+      K_AA[0] = stiffness * (1 - R * (inverse_L - inverse_L_cubic * (diff_x * diff_y)));
+      K_AA[1] = stiffness * (- R * (-inverse_L_cubic * (diff_x * diff_y)));
+      K_AA[2] = stiffness * (- R * (-inverse_L_cubic * (diff_x * diff_y)));
+      K_AA[3] = stiffness * (1 - R * (inverse_L - inverse_L_cubic * (diff_x * diff_y)));
+      elementStiffnessMatrix[0] = K_AA[0];
+      elementStiffnessMatrix[1] = K_AA[1];
+      elementStiffnessMatrix[2] = -K_AA[0];
+      elementStiffnessMatrix[3] = -K_AA[1];
+
+      elementStiffnessMatrix[4] = K_AA[2];
+      elementStiffnessMatrix[5] = K_AA[3];
+      elementStiffnessMatrix[6] = -K_AA[2];
+      elementStiffnessMatrix[7] = -K_AA[3];
+
+      elementStiffnessMatrix[8] = -K_AA[0];
+      elementStiffnessMatrix[9] = -K_AA[1];
+      elementStiffnessMatrix[10] = K_AA[0];
+      elementStiffnessMatrix[11] = K_AA[1];
+
+      elementStiffnessMatrix[12] = -K_AA[2];
+      elementStiffnessMatrix[13] = -K_AA[3];
+      elementStiffnessMatrix[14] = K_AA[2];
+      elementStiffnessMatrix[15] = K_AA[3];
   }
 
   // ***********************************************
