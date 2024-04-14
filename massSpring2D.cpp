@@ -50,8 +50,8 @@ void MassSpring2D::ComputeElementEnergyAndForceAndStiffnessMatrix(int eid, const
   Vec2d cur_Pos_A = Vec2d(u[2 * particleA], u[2 * particleA + 1]);
   Vec2d cur_Pos_B = Vec2d(u[2 * particleB], u[2 * particleB + 1]);
   Vec2d L = rest_Pos_A - rest_Pos_B + cur_Pos_A - cur_Pos_B;
-  if (len(L) > 0.001)
-      printf("asd");
+  /*if (len(L) > 0.001)
+      printf("asd");*/
 
   if (elementEnergy)
   {

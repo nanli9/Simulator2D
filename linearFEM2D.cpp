@@ -111,16 +111,38 @@ void LinearFEM2D::ComputeElementEnergyAndForceAndStiffnessMatrix(int el, const d
   if (elementStiffnessMatrix)
   {
     // please copy the stiffness matrix from  KElementUndeformed[el] to elementStiffnessMatrix
+      for (int i = 0; i < dof2; i++)
+      {
+          elementStiffnessMatrix[i] = KElementUndeformed[el][i];
+      }
+
   }
   
   if(elementInternalForces)
   {
     // please calculate the internal force for the element (triangle)
+      for (int i = 0; i < dof; i++)
+      {
+          double sum = 0;
+          for (int j = 0; j < 3; j++)
+          {
+            sum += elementStiffnessMatrix[dof * i + 2 * j] * u[2 * vtxIndex[j]];
+            sum += elementStiffnessMatrix[dof * i + 2 * j + 1] * u[2 * vtxIndex[j] + 1];
+          }
+          elementInternalForces[i] = sum;
+      }
   }
 
   if (elementEnergy)
   {
     // please calculate the energy for the element (triangle)
+      double sum = 0;
+      for (int i = 0; i < 3; i++)
+      {
+          sum += u[2 * vtxIndex[i]] * elementInternalForces[2 * i];
+          sum += u[2 * vtxIndex[i] + 1] * elementInternalForces[2 * i + 1];
+      }
+      elementEnergy[0] = 0.5 * sum;
   }
 
   // ***********************************************************
